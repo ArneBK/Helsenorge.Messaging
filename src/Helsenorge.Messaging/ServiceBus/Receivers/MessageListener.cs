@@ -143,7 +143,8 @@ namespace Helsenorge.Messaging.ServiceBus.Receivers
                     ToHerId = message.ToHerId,
                     MessageId = message.MessageId,
                     CorrelationId = message.CorrelationId,
-                    EnqueuedTimeUtc = message.EnqueuedTimeUtc
+                    EnqueuedTimeUtc = message.EnqueuedTimeUtc,
+                    RenewLock = message.RenewLock
                 };
                 NotifyMessageProcessingStarted(incomingMessage);
                 Logger.LogStartReceive(QueueType, incomingMessage);
@@ -154,7 +155,7 @@ namespace Helsenorge.Messaging.ServiceBus.Receivers
                 ValidateMessageHeader(message);
                 // we need the certificates for decryption and certificate use
                 incomingMessage.CollaborationAgreement = await ResolveProfile(message).ConfigureAwait(false);
-
+                
                 var payload = HandlePayload(message, bodyStream, message.ContentType, incomingMessage);
                 if (payload != null)
                 {
